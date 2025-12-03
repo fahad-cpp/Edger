@@ -1,0 +1,1 @@
+g++ Main.cpp AutoClicker.cpp -o Edger.exe
