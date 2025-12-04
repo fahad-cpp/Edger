@@ -1,6 +1,6 @@
 #include <string>
 #define LIST_NAME "chessplayers.txt"
-#define PROMPT "What is the name of "
+#define PROMPT "What is the age of "
 class AutoClicker{
     bool running = false;
     public:
