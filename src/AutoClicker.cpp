@@ -1,8 +1,7 @@
 #include "AutoClicker.h"
-#include <windows.h>
 #include <iostream>
 #include <fstream>
-void pressKey(WORD vk){
+void AutoClicker::pressKey(WORD vk){
     INPUT input = {0};
 
     //Key Down
@@ -40,7 +39,7 @@ void AutoClicker::typeString(std::string str){
         }
     }
 }
-void clickAt(unsigned int x,unsigned int y){
+void AutoClicker::clickAt(unsigned int x,unsigned int y){
     //Hover
     SetCursorPos(x,y);
     Sleep(10);
@@ -61,11 +60,30 @@ void AutoClicker::makeSearch(std::string str){
     //Press enter
     pressKey(VK_RETURN);
     
-
     //Wait
     Sleep(5000);
 }
+void AutoClicker::changeAccount(int accNum){
 
+    //Select account list
+    clickAt(1789,612);
+    Sleep(10);
+
+    //TODO: Note for yamin : find out distance in pixels between accounts and store them in dist
+    //then find out position of first account and put that in place of x and y in firstAccountPos variable
+    //then Uncomment everything below and test and tweak the function to see if it works
+
+
+    //const int dist = ;
+    //const POINT firstAccountPos = {x,y};
+
+    //clickAt(firstAccountPos.x,firstAccountPos.y += (dist * accNum));
+}
+void printCursorPos(){
+    POINT point;
+    GetCursorPos(&point);
+    std::cout << "\rCursor Pos :" << point.x << " " << point.y << std::flush;
+}
 void AutoClicker::startClicker(){
     running = true;
     std::cout << "Clicker turned on\n";
