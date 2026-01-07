@@ -19,14 +19,26 @@ void pressEnter(){
 void AutoClicker::typeString(std::string str){
 
     INPUT input = {};
-    
     for(char c : str){
+        bool pressShift = c == '?';
         input.type = INPUT_KEYBOARD;
+
+        if(pressShift){
+            input.ki.wVk = VK_LSHIFT;
+            input.ki.dwFlags = 0;
+            SendInput(1,&input,sizeof(INPUT));
+        }
+
         input.ki.wVk = VkKeyScanA(c);
         input.ki.dwFlags = 0;
         SendInput(1,&input,sizeof(INPUT));
         
-        
+        if(pressShift){
+            input.ki.wVk = VK_LSHIFT;
+            input.ki.dwFlags = KEYEVENTF_KEYUP;
+            SendInput(1,&input,sizeof(INPUT));
+        }
+
         Sleep(50);
         input.ki.dwFlags = KEYEVENTF_KEYUP;
         SendInput(1,&input,sizeof(INPUT));
@@ -61,22 +73,27 @@ void AutoClicker::makeSearch(std::string str){
     //Wait
     Sleep(5000);
 }
-
+void AutoClicker::changeAccount(unsigned int accNum){
+    
+}
 void AutoClicker::startClicker(){
     running = true;
     std::cout << "Clicker turned on\n";
-
+    static int accountNum = 0;
+    
     //Open names file
     std::ifstream ifs;
     ifs.open(LIST_NAME);
-
-    std::string name;
+    //select an account
+    changeAccount(accountNum);
+    std::string line;
     //get a name
-    while(std::getline(ifs,name)){
+    while(std::getline(ifs,line)){
         //For every name make search with prompt
-        makeSearch((PROMPT + name ));
+        makeSearch((PROMPT + line ));
         if(!running) return;
     }
+
     stopClicker();
 }
 

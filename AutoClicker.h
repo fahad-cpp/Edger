@@ -1,6 +1,6 @@
 #include <string>
 #define LIST_NAME "chessplayers.txt"
-#define PROMPT "What is the name of "
+#define PROMPT ""
 class AutoClicker{
     bool running = false;
     public:
@@ -8,5 +8,6 @@ class AutoClicker{
     void startClicker();
     void stopClicker();
     void typeString(std::string str);
+    void changeAccount(unsigned int);
     void run();
 };
