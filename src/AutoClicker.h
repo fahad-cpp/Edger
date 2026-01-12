@@ -1,7 +1,7 @@
 #include <string>
+#include <Windows.h>
 #define LIST_NAME "chessplayers.txt"
-#define PROMPT "What is the age of "
-#include <windows.h>
+#define PROMPT ""
 class AutoClicker{
     bool running = false;
     public:
@@ -11,6 +11,7 @@ class AutoClicker{
     void stopClicker();
     void typeString(std::string str);
     void clickAt(unsigned int x,unsigned int y);
+    void changeAccount(unsigned int);
     void pressKey(WORD vk);
     void run();
 };

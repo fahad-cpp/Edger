@@ -17,18 +17,31 @@ void AutoClicker::pressKey(WORD vk){
 }
 void typeChar(char c){
     INPUT input = {0};
+    bool pressShift = c == '?';
     input.type = INPUT_KEYBOARD;
+
+    if(pressShift){
+        input.ki.wVk = VK_LSHIFT;
+        input.ki.dwFlags = 0;
+        SendInput(1,&input,sizeof(INPUT));
+    }
+
     input.ki.wVk = VkKeyScanA(c);
     input.ki.dwFlags = 0;
-    //KeyDown
     SendInput(1,&input,sizeof(INPUT));
+    
+    if(pressShift){
+        input.ki.wVk = VK_LSHIFT;
+        input.ki.dwFlags = KEYEVENTF_KEYUP;
+        SendInput(1,&input,sizeof(INPUT));
+    }
+    
     Sleep(50);
-    //KeyUp
+    input.ki.wVk = VkKeyScanA(c);
     input.ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(1,&input,sizeof(INPUT));
-
-    Sleep(50);
 }
+
 void AutoClicker::typeString(std::string str){
     for(char c : str){
         typeChar(c);
@@ -63,46 +76,27 @@ void AutoClicker::makeSearch(std::string str){
     //Wait
     Sleep(5000);
 }
-void AutoClicker::changeAccount(int accNum){
-
-    //Select account list
-    clickAt(1789,612);
-    Sleep(10);
-
-    //TODO: Note for yamin : find out distance in pixels between accounts and store them in dist
-    //then find out position of first account and put that in place of x and y in firstAccountPos variable
-    //then Uncomment everything below and test and tweak the function to see if it works
-
-
-    //const int dist = ;
-    //const POINT firstAccountPos = {x,y};
-
-    //clickAt(firstAccountPos.x,firstAccountPos.y += (dist * accNum));
-}
-void printCursorPos(){
-    POINT point;
-    GetCursorPos(&point);
-    std::cout << "\rCursor Pos :" << point.x << " " << point.y << std::flush;
+void AutoClicker::changeAccount(unsigned int accNum){
+    
 }
 void AutoClicker::startClicker(){
     running = true;
     std::cout << "Clicker turned on\n";
-
+    static int accountNum = 0;
+    
     //Open names file
     std::ifstream ifs;
     ifs.open(LIST_NAME);
-    if (!ifs.is_open()) {
-        std::cerr << "Error: Could not open " << LIST_NAME << "\n";
-        stopClicker();
-        return;
-    }
-    std::string name;
+    //select an account
+    changeAccount(accountNum);
+    std::string line;
     //get a name
-    while(std::getline(ifs,name)){
+    while(std::getline(ifs,line)){
         //For every name make search with prompt
-        makeSearch((PROMPT + name ));
+        makeSearch((PROMPT + line ));
         if(!running) return;
     }
+
     stopClicker();
 }
 

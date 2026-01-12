@@ -83,5 +83,3 @@ If you'd like help improving the project, I can:
 * Add `config.json` support and a `--dry-run` flag.
 * Create a safer demo mode that doesn't send input to the OS.
 * Create a GitHub Actions CI job to build the project automatically.
-
-Tell me which improvements you want and I will update the repository README or push suggested changes to a local copy for you to review.
