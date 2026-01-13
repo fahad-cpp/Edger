@@ -82,12 +82,12 @@ void AutoClicker::changeAccount(unsigned int accNum){
 void AutoClicker::startClicker(){
     running = true;
     std::cout << "Clicker turned on\n";
-    static int accountNum = 0;
     
     //Open names file
     std::ifstream ifs;
     ifs.open(LIST_NAME);
     //select an account
+    static int accountNum = 0;
     changeAccount(accountNum);
     std::string line;
     //get a name
@@ -106,8 +106,6 @@ void AutoClicker::stopClicker(){
 }
 void AutoClicker::run(){
     while(1){
-         while (true) {
-
         if (running)
             startClicker();
 
@@ -117,6 +115,5 @@ void AutoClicker::run(){
 
         if (GetAsyncKeyState('X') && !running)
             startClicker();
-    }
     }
 }

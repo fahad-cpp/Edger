@@ -1,12 +1,11 @@
 #include <string>
 #include <Windows.h>
-#define LIST_NAME "chessplayers.txt"
+#define LIST_NAME "searchlist.txt"
 #define PROMPT ""
 class AutoClicker{
     bool running = false;
     public:
     void makeSearch(std::string str);
-    void changeAccount(int accNum);
     void startClicker();
     void stopClicker();
     void typeString(std::string str);
