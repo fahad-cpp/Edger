@@ -89,6 +89,9 @@ void AutoClicker::startClicker(){
     //Open names file
     std::ifstream ifs;
     ifs.open(LIST_NAME);
+    if(!ifs.is_open()){
+        std::cerr << "Failed to open "  LIST_NAME  "\n";
+    }
     //select an account
     changeAccount(accountNum);
     std::string line;
