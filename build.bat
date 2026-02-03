@@ -24,7 +24,7 @@ goto compileCmake
 
 REM compile using g++
 :compilegcc
-g++ -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/Edger.exe
+g++ -std=c++23 -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/Edger.exe
 if errorlevel 1 (
     echo compilation failed.
     exit /b 1
@@ -53,6 +53,8 @@ goto startProgram
 
 :startProgram
 echo successfully compiled.
-start bin/Edger.exe
+if not exist Edger.lnk shortcut.bat
+
+start Edger.lnk
 
 endlocal
