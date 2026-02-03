@@ -66,7 +66,7 @@ void clickAt(unsigned int x,unsigned int y){
 }
 void AutoClicker::makeSearch(std::string str){
     //click on search bar
-    clickAt(148,54);
+    clickAt(searchBarLoc.x,searchBarLoc.y);
 
     //Type
     typeString(str);
@@ -74,9 +74,8 @@ void AutoClicker::makeSearch(std::string str){
     //Press enter
     pressKey(VK_RETURN);
     
-
-    //Wait
-    Sleep(5000);
+    //wait random delay from 0 to maxSearchDelay seconds
+    Sleep((rand() % (maxSearchDelay + 1)) * 1000);
 }
 void AutoClicker::changeAccount(unsigned int accNum){
     
@@ -110,6 +109,7 @@ void AutoClicker::stopClicker(){
     std::cout << "Clicker turned off\n";
 }
 void AutoClicker::run(){
+    srand(time(NULL));
     while(1){
          while (true) {
 

@@ -53,6 +53,8 @@ goto startProgram
 
 :startProgram
 echo successfully compiled.
-start bin/Edger.exe
+if not exist Edger.lnk shortcut.bat
+
+start Edger.lnk
 
 endlocal
