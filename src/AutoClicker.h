@@ -3,8 +3,9 @@
 #include <string>
 #define LIST_NAME "searchList.txt"
 #define PROMPT ""
-//max search delay in seconds
-const int maxSearchDelay = 7;
+//max-min search delay in seconds
+const int maxSearchDelay = 5;
+const int minSearchDelay = 15;
 const std::string edgePath = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application";
 
 typedef struct vec2{

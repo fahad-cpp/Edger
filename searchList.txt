@@ -1,1 +1,20 @@
-Remove this line and Enter your search list here.
+What is Monte Carlo integration and why is it useful in ray tracing?
+How does stratified sampling reduce variance compared to purely random sampling?
+What is the law of diminishing returns in Monte Carlo rendering?
+What is a probability density function (PDF) in the context of rendering?
+How is importance sampling used to reduce noise in ray tracers?
+What is the relationship between a PDF and its cumulative distribution function (CDF)?
+How do you generate non-uniform random samples using inverse transform sampling?
+Why does uniform sampling perform poorly for small light sources?
+What does solid angle mean in ray tracing and how is it related to the unit sphere?
+How is cosine-weighted hemisphere sampling derived mathematically?
+What is the scattering PDF for a Lambertian surface?
+How is albedo defined in physically based rendering?
+What is the difference between a BRDF and a scattering PDF?
+Why are mixture PDFs used in importance sampling?
+How do you combine light sampling and surface sampling using mixture densities?
+What is an orthonormal basis (ONB) and why is it needed in ray tracing?
+How do you transform a direction sampled in local space to world space?
+How is direct light sampling different from shadow rays?
+Why do NaNs appear in Monte Carlo ray tracers and how are they handled?
+What are the limitations of RGB rendering compared to spectral rendering?

@@ -79,7 +79,8 @@ void AutoClicker::makeSearch(std::string str) {
     pressKey(VK_RETURN);
 
     //wait random delay from 0 to maxSearchDelay seconds
-    Sleep((rand() % (maxSearchDelay + 1)) * 1000);
+    int diff = maxSearchDelay - minSearchDelay;
+    Sleep(((rand() % (diff + 1)) + minSearchDelay) * 1000);
 }
 
 int getEdgeAccountNum() {
@@ -109,9 +110,11 @@ void openEdge(int accNum) {
         accountName = "Default";
     }
     else {
-        accountName = "Profile " + accNum;
+        accountName = "Profile " + std::to_string(accNum);
     }
     std::string command = "start \"\" " + exeLoc + " --profile-directory=\""+accountName+"\"";
+    std::cout << "Strting Edge on:" << accountName << "\n";
+    std::cout << "Executing Command: " << command << "\n";
     system(command.c_str());
 }
 
@@ -142,8 +145,10 @@ void AutoClicker::startClicker() {
         //Open names file
         
         //get a search line
+        int searchCount = 0;
         for(const std::string& line : searchList){
             //search the line
+            std::cout << "Search Counter:" << searchCount << "\n";
             makeSearch((PROMPT + line));
             if (!running) return;
         }
@@ -173,5 +178,4 @@ void AutoClicker::run() {
                 startClicker();
         }
     }
-
 }
