@@ -24,7 +24,7 @@ goto compileCmake
 
 REM compile using g++
 :compilegcc
-g++ -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/Edger.exe
+g++ -std=c++23 -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/Edger.exe
 if errorlevel 1 (
     echo compilation failed.
     exit /b 1

@@ -2,8 +2,12 @@
 #include <windows.h>
 #include <iostream>
 #include <fstream>
-void pressKey(WORD vk){
-    INPUT input = {0};
+#include <filesystem>
+#include <vector>
+#include <sstream>
+
+void pressKey(WORD vk) {
+    INPUT input = { 0 };
 
     //Key Down
     input.type = INPUT_KEYBOARD;
@@ -16,112 +20,158 @@ void pressKey(WORD vk){
     input.ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(1, &input, sizeof(INPUT));
 }
-void typeChar(char c){
-    INPUT input = {0};
+void typeChar(char c) {
+    INPUT input = { 0 };
     bool pressShift = c == '?';
     input.type = INPUT_KEYBOARD;
 
-    if(pressShift){
+    if (pressShift) {
         input.ki.wVk = VK_LSHIFT;
         input.ki.dwFlags = 0;
-        SendInput(1,&input,sizeof(INPUT));
+        SendInput(1, &input, sizeof(INPUT));
     }
 
     input.ki.wVk = VkKeyScanA(c);
     input.ki.dwFlags = 0;
-    SendInput(1,&input,sizeof(INPUT));
-    
-    if(pressShift){
+    SendInput(1, &input, sizeof(INPUT));
+
+    if (pressShift) {
         input.ki.wVk = VK_LSHIFT;
         input.ki.dwFlags = KEYEVENTF_KEYUP;
-        SendInput(1,&input,sizeof(INPUT));
+        SendInput(1, &input, sizeof(INPUT));
     }
-    
+
     Sleep(50);
     input.ki.wVk = VkKeyScanA(c);
     input.ki.dwFlags = KEYEVENTF_KEYUP;
-    SendInput(1,&input,sizeof(INPUT));
+    SendInput(1, &input, sizeof(INPUT));
 }
 
-void AutoClicker::typeString(std::string str){
-    for(char c : str){
+void AutoClicker::typeString(std::string str) {
+    for (char c : str) {
         typeChar(c);
 
-        if(GetAsyncKeyState('Z') && (c != 'Z' && c != 'z')){
+        if (GetAsyncKeyState('Z') && (c != 'Z' && c != 'z')) {
             stopClicker();
             return;
         }
     }
 }
-void clickAt(unsigned int x,unsigned int y){
+void clickAt(unsigned int x, unsigned int y) {
     //Hover
-    SetCursorPos(x,y);
+    SetCursorPos(x, y);
     Sleep(10);
 
     //Click
-    mouse_event(MOUSEEVENTF_LEFTDOWN,0,0,0,0);
+    mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
     Sleep(6);
-    mouse_event(MOUSEEVENTF_LEFTUP,0,0,0,0);
+    mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
     Sleep(10);
 }
-void AutoClicker::makeSearch(std::string str){
+void AutoClicker::makeSearch(std::string str) {
     //click on search bar
-    clickAt(searchBarLoc.x,searchBarLoc.y);
+    clickAt(searchBarLoc.x, searchBarLoc.y);
 
     //Type
     typeString(str);
 
     //Press enter
     pressKey(VK_RETURN);
-    
+
     //wait random delay from 0 to maxSearchDelay seconds
     Sleep((rand() % (maxSearchDelay + 1)) * 1000);
 }
-void AutoClicker::changeAccount(unsigned int accNum){
-    
+
+int getEdgeAccountNum() {
+    namespace fs = std::filesystem;
+
+    std::string envPath = "%APPDATA%\\..\\local\\Microsoft\\Edge\\User Data";
+    const size_t MAX_LEN = 1024;
+    char buffer[MAX_LEN];
+    ExpandEnvironmentStringsA(envPath.c_str(), buffer, MAX_LEN);
+    fs::path target = buffer;
+    int counter = 0;
+    for (const fs::directory_entry& entry : fs::directory_iterator(target)) {
+        if (entry.is_directory()) {
+            std::string folderName = entry.path().filename().string();
+            if (folderName.contains("Profile "))counter++;
+        }
+    }
+
+    return counter + 1;
 }
-void AutoClicker::startClicker(){
-    running = true;
-    std::cout << "Clicker turned on\n";
-    static int accountNum = 0;
-    
-    //Open names file
+
+void openEdge(int accNum) {
+    std::string exeLoc = "\"" + edgePath  + "\\msedge.exe\"";
+    std::printf("%s\n",exeLoc.c_str());
+    std::string accountName = "";
+    if (accNum == 0) {
+        accountName = "Default";
+    }
+    else {
+        accountName = "Profile " + accNum;
+    }
+    std::string command = "start \"\" " + exeLoc + " --profile-directory=\""+accountName+"\"";
+    system(command.c_str());
+}
+
+void AutoClicker::startClicker() {
+    //get search list and store in searchList
     std::ifstream ifs;
     ifs.open(LIST_NAME);
-    if(!ifs.is_open()){
+    if (!ifs.is_open()) {
         std::cerr << "Failed to open "  LIST_NAME  "\n";
     }
-    //select an account
-    changeAccount(accountNum);
     std::string line;
-    //get a name
+    std::vector<std::string> searchList = {};
     while(std::getline(ifs,line)){
-        //For every name make search with prompt
-        makeSearch((PROMPT + line ));
-        if(!running) return;
+        searchList.push_back(line);
+    }
+    ifs.close();
+
+    int maxCount = getEdgeAccountNum();
+    int curAccount = 0;
+
+    //For every account
+    while (curAccount < maxCount) {
+        openEdge(curAccount);
+        Sleep(2000);
+
+        running = true;
+        std::cout << "Clicker turned on\n";
+        //Open names file
+        
+        //get a search line
+        for(const std::string& line : searchList){
+            //search the line
+            makeSearch((PROMPT + line));
+            if (!running) return;
+        }
+        curAccount++;
     }
 
     stopClicker();
 }
 
-void AutoClicker::stopClicker(){
+void AutoClicker::stopClicker() {
     running = false;
     std::cout << "Clicker turned off\n";
 }
-void AutoClicker::run(){
+void AutoClicker::run() {
     srand(time(NULL));
-    while(1){
-         while (true) {
+    while (1) {
+        while (true) {
 
-        if (running)
-            startClicker();
+            if (running)
+                startClicker();
 
-        // Hotkeys
-        if (GetAsyncKeyState('Z') && running)
-            stopClicker();
+            // Hotkeys
+            if (GetAsyncKeyState('Z') && running)
+                stopClicker();
 
-        if (GetAsyncKeyState('X') && !running)
-            startClicker();
+            if (GetAsyncKeyState('X') && !running)
+                startClicker();
+        }
     }
-    }
+
 }
