@@ -149,6 +149,7 @@ void AutoClicker::startClicker() {
         for(const std::string& line : searchList){
             //search the line
             std::cout << "Search Counter:" << searchCount << "\n";
+            searchCount++;
             makeSearch((PROMPT + line));
             if (!running) return;
         }
