@@ -74,57 +74,78 @@ void AutoClicker::makeSearch(std::string str) {
 
     //Type
     typeString(str);
+    if(!running)return;
 
     //Press enter
     pressKey(VK_RETURN);
 
-    //wait random delay from 0 to maxSearchDelay seconds
+    //wait random delay from minSearchDelay to maxSearchDelay seconds
     int diff = maxSearchDelay - minSearchDelay;
-    Sleep(((rand() % (diff + 1)) + minSearchDelay) * 1000);
+    int delayTime = ((rand() % (diff + 1)) + minSearchDelay);
+    int divide = 100;
+    //divide delaytime and check for input 100 times while in delay for exiting
+    std::printf("Waiting %d seconds...\n",delayTime);
+    for(int i=0;i<divide;i++){
+        Sleep((delayTime * 1000)/divide);
+        if (GetAsyncKeyState('Z')) {
+            stopClicker();
+            return;
+        }
+    }
 }
-
-int getEdgeAccountNum() {
+void printAccounts(std::vector<std::string>& accountDirectories){
+    std::printf("%d accounts found:\n",accountDirectories.size());
+    int i=1;
+    for(const std::string& accountName : accountDirectories){
+        std::printf("%d.%s\n",i,accountName.c_str());
+        i++;
+    }
+}
+std::vector<std::string> getEdgeAccounts() {
     namespace fs = std::filesystem;
-
+    std::vector<std::string> accountDirectories = {};
     std::string envPath = "%APPDATA%\\..\\local\\Microsoft\\Edge\\User Data";
     const size_t MAX_LEN = 1024;
     char buffer[MAX_LEN];
     ExpandEnvironmentStringsA(envPath.c_str(), buffer, MAX_LEN);
     fs::path target = buffer;
-    int counter = 0;
+    //Assuming there will always be a default account
+    accountDirectories.push_back("Default");
     for (const fs::directory_entry& entry : fs::directory_iterator(target)) {
         if (entry.is_directory()) {
             std::string folderName = entry.path().filename().string();
-            if (folderName.contains("Profile "))counter++;
+            if (folderName.contains("Profile ")){
+                accountDirectories.push_back(folderName);
+            }
         }
     }
 
-    return counter + 1;
+    printAccounts(accountDirectories);
+
+    return accountDirectories;
 }
 
-void openEdge(int accNum) {
+void openEdge(const std::string& accountName) {
     std::string exeLoc = "\"" + edgePath  + "\\msedge.exe\"";
-    std::printf("%s\n",exeLoc.c_str());
-    std::string accountName = "";
-    if (accNum == 0) {
-        accountName = "Default";
-    }
-    else {
-        accountName = "Profile " + std::to_string(accNum);
-    }
+
     std::string command = "start \"\" " + exeLoc + " --profile-directory=\""+accountName+"\"";
     std::cout << "Strting Edge on:" << accountName << "\n";
-    std::cout << "Executing Command: " << command << "\n";
+    //std::cout << "Executing Command: " << command << "\n";
     system(command.c_str());
 }
 
 void AutoClicker::startClicker() {
     //get search list and store in searchList
+    running = true;
+    std::cout << "Clicker turned on\n";
+    
+    //Open names file
     std::ifstream ifs;
     ifs.open(LIST_NAME);
     if (!ifs.is_open()) {
         std::cerr << "Failed to open "  LIST_NAME  "\n";
     }
+
     std::string line;
     std::vector<std::string> searchList = {};
     while(std::getline(ifs,line)){
@@ -132,17 +153,14 @@ void AutoClicker::startClicker() {
     }
     ifs.close();
 
-    int maxCount = getEdgeAccountNum();
-    int curAccount = 0;
+    //Get all edge accounts
+    std::vector<std::string> accountDirectories = getEdgeAccounts();
+    int accountCount = accountDirectories.size();
 
     //For every account
-    while (curAccount < maxCount) {
-        openEdge(curAccount);
+    for(int i=0;i<accountCount;i++){
+        openEdge(accountDirectories.at(i));
         Sleep(2000);
-
-        running = true;
-        std::cout << "Clicker turned on\n";
-        //Open names file
         
         //get a search line
         int searchCount = 0;
@@ -153,7 +171,6 @@ void AutoClicker::startClicker() {
             makeSearch((PROMPT + line));
             if (!running) return;
         }
-        curAccount++;
     }
 
     stopClicker();
