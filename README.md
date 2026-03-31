@@ -7,7 +7,7 @@ The purpose of it is to automate earning Edge Rewards.
 
 ## Requirements
 
-* Windows 10/11
+* Windows 10/11 (For Windows.h)
 * Microsoft Edge installed
 * A C++ compiler compatible with the project (gcc recommended)
 
