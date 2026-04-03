@@ -1,40 +1,60 @@
 @echo off
-
 setlocal
-set "CONFIG=Release"
-set "EXENAME=Edger.exe"
-
+if exist bin\Edger.exe del bin\Edger.exe
 if not exist bin mkdir bin
 
-::Check if cmake exists
+REM first try g++
+where g++ >nul 2>nul
+if errorlevel 1 (
+    echo g++ compiler not found
+    goto tryCMake
+)
+echo compiling using g++...
+goto compilegcc
+
+REM if g++ does not work try CMake
+:tryCMake
 where cmake >nul 2>nul
 if errorlevel 1 (
-    where g++ >nul 2>nul
-    if errorlevel 1 (
-        echo [build.bat]:No Compatible C++ build tools were found.
-        exit /b 1
-    )
-    g++ src/*.cpp src/*.h -o bin/%EXENAME%
-    goto run
-)
-:cmake
-if not exist build mkdir build
-pushd build
-cmake .. >nul
-if errorlevel 1 (
-    echo [build.bat]:Error Generating build files
+    echo cmake not found
     exit /b 1
 )
-cmake --build . --config %CONFIG% --parallel >nul
+echo compiling using cmake...
+goto compileCmake
+
+REM compile using g++
+:compilegcc
+g++ -std=c++23 -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/Edger.exe
 if errorlevel 1 (
-    echo [build.bat]:Error building project.
+    echo compilation failed.
+    exit /b 1
+)
+goto startProgram
+
+REM compile using CMake
+:compileCmake
+if not exist build mkdir build
+pushd build
+cmake -S .. -DCMAKE_BUILD_TYPE=Release >nul 2>error.txt
+if errorlevel 1 (
+    echo failed to generate build files using cmake.
+    type error.txt
+    exit /b 1
+)
+
+cmake --build . --config Release --parallel >error.txt 2>nul
+if errorlevel 1 (
+    echo failed to build the program.
+    type error.txt
     exit /b 1
 )
 popd
-goto run
+goto startProgram
 
-:run
-echo [build.bat]:Succesfully compiled to bin/%EXENAME%
-start bin/%EXENAME%
+:startProgram
+echo successfully compiled.
+if not exist Edger.lnk shortcut.bat
+
+start Edger.lnk
 
 endlocal

@@ -1,7 +1,18 @@
+#ifndef AUTOCLICKER_H
+#define AUTOCLICKER_H
 #include <string>
-#include <Windows.h>
-#define LIST_NAME "searchlist.txt"
+#define LIST_NAME "searchList.txt"
 #define PROMPT ""
+//max-min search delay in seconds
+const int minSearchDelay = 5;
+const int maxSearchDelay = 15;
+const std::string edgePath = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application";
+
+typedef struct vec2{
+    int x;
+    int y;
+}vec2;
+const vec2 searchBarLoc = {148,54};
 class AutoClicker{
     bool running = false;
     public:
@@ -9,8 +20,6 @@ class AutoClicker{
     void startClicker();
     void stopClicker();
     void typeString(std::string str);
-    void clickAt(unsigned int x,unsigned int y);
-    void changeAccount(unsigned int);
-    void pressKey(WORD vk);
     void run();
 };
+#endif

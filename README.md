@@ -1,14 +1,15 @@
 # Edger
 
-**Edger** is a small Windows utility written in C++ that automates performing searches in Microsoft Edge. It was created to simulate search activity.
+**Edger** is a small Windows utility written in C++ that automates searches in Microsoft Edge, it goes through all of your accounts and searches the search list provided in `searchList.txt` for all of the accounts.
+
+The purpose of it is to automate earning Edge Rewards.
 
 
 ## Requirements
 
 * Windows 10/11
 * Microsoft Edge installed
-* A C++ compiler compatible with the project (MSVC / Visual Studio recommended).
-* Administrator privileges may be required for simulated input on some systems.
+* A C++ compiler compatible with the project (gcc recommended)
 
 
 ## Build
@@ -26,11 +27,18 @@ OR
 build.bat
 ```
 
-## Usage
-
-add list of search prompts in searchlist.txt file
-and run the compiled executable:
+if somehow the project build fails with build.bat , you can try compiling manually using CMake:
 
 ```batch
-bin\Edger.exe
+mkdir build
+cd build
+
+cmake .. -DCMAKE_BUILD_TYPE="Release"
+cmake --build . --config Release
 ```
+
+## Usage
+
+first modify the `searchList.txt` to add searches that you want to search. 
+
+after executing build.bat , you will be able to see a Edger.lnk shortcut , double click on it to run
