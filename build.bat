@@ -1,5 +1,6 @@
 @echo off
 setlocal
+set "EXENAME=Edger-x64.exe"
 if exist bin\Edger.exe del bin\Edger.exe
 if not exist bin mkdir bin
 
@@ -24,7 +25,7 @@ goto compileCmake
 
 REM compile using g++
 :compilegcc
-g++ -std=c++23 -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/Edger.exe
+g++ -std=c++23 -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/%EXENAME%
 if errorlevel 1 (
     echo compilation failed.
     exit /b 1

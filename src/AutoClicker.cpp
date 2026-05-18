@@ -1,10 +1,14 @@
 #include "AutoClicker.h"
+#include "Logging.h"
+#include <chrono>
+#include <cstddef>
+#include <libloaderapi.h>
+#include <thread>
 #include <windows.h>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
 #include <vector>
-#include <sstream>
 
 void pressKey(WORD vk) {
     INPUT input = { 0 };
@@ -84,7 +88,6 @@ void AutoClicker::makeSearch(std::string str) {
     int delayTime = ((rand() % (diff + 1)) + minSearchDelay);
     int divide = 100;
     //divide delaytime and check for input 100 times while in delay for exiting
-    std::printf("Waiting %d seconds...\n",delayTime);
     for(int i=0;i<divide;i++){
         Sleep((delayTime * 1000)/divide);
         if (GetAsyncKeyState('Z')) {
@@ -93,8 +96,8 @@ void AutoClicker::makeSearch(std::string str) {
         }
     }
 }
-void printAccounts(std::vector<std::string>& accountDirectories){
-    std::printf("%d accounts found:\n",accountDirectories.size());
+void printAccounts(const std::vector<std::string>& accountDirectories){
+    std::printf("you have %zu edge accounts:\n",accountDirectories.size());
     int i=1;
     for(const std::string& accountName : accountDirectories){
         std::printf("%d.%s\n",i,accountName.c_str());
@@ -120,8 +123,6 @@ std::vector<std::string> getEdgeAccounts() {
         }
     }
 
-    printAccounts(accountDirectories);
-
     return accountDirectories;
 }
 
@@ -129,16 +130,14 @@ void openEdge(const std::string& accountName) {
     std::string exeLoc = "\"" + edgePath  + "\\msedge.exe\"";
 
     std::string command = "start \"\" " + exeLoc + " --profile-directory=\""+accountName+"\"";
-    std::cout << "Strting Edge on:" << accountName << "\n";
-    //std::cout << "Executing Command: " << command << "\n";
+
     system(command.c_str());
 }
 
 void AutoClicker::startClicker() {
     //get search list and store in searchList
     running = true;
-    std::cout << "Clicker turned on\n";
-    
+
     //Open names file
     std::ifstream ifs;
     ifs.open(LIST_NAME);
@@ -161,13 +160,10 @@ void AutoClicker::startClicker() {
     for(int i=0;i<accountCount;i++){
         openEdge(accountDirectories.at(i));
         Sleep(2000);
-        
+
         //get a search line
-        int searchCount = 0;
         for(const std::string& line : searchList){
             //search the line
-            std::cout << "Search Counter:" << searchCount << "\n";
-            searchCount++;
             makeSearch((PROMPT + line));
             if (!running) return;
         }
@@ -178,22 +174,39 @@ void AutoClicker::startClicker() {
 
 void AutoClicker::stopClicker() {
     running = false;
-    std::cout << "Clicker turned off\n";
+}
+void hideConsoleCursor(){
+    HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(out, &cursorInfo);
+    cursorInfo.bVisible = false;
+    SetConsoleCursorInfo(out, &cursorInfo);
+}
+void setIcon(const char* iconPath){
+    HWND hwnd = GetConsoleWindow();
+    HICON icon = LoadIconA(GetModuleHandle(NULL), iconPath);
+    SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)icon);
+    SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)icon);
 }
 void AutoClicker::run() {
     srand(time(NULL));
-    while (1) {
-        while (true) {
-
-            if (running)
-                startClicker();
-
-            // Hotkeys
-            if (GetAsyncKeyState('Z') && running)
-                stopClicker();
-
-            if (GetAsyncKeyState('X') && !running)
-                startClicker();
+    setIcon("icon.ico");
+    hideConsoleCursor();
+    printAccounts(getEdgeAccounts());
+    while (true) {
+        if(!running){
+            liveLog("Edger is turned off : (press X to turn on)");
         }
+        // Hotkeys
+        if (GetAsyncKeyState('Z') && running){
+            liveLog("Edger is turned off : (press X to turn on)");
+            stopClicker();
+        }
+        if (GetAsyncKeyState('X') && !running){
+            liveLog("Edger is turned on : (press Z to turn off)");
+            startClicker();
+        }
+        //to reduce cpu usage
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }

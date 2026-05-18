@@ -4,7 +4,7 @@ set BASEDIR=%~dp0
 set SHORTCUT=%BASEDIR%\Edger.lnk
 set STARTIN=%BASEDIR%
 set ICON=%BASEDIR%icon.ico
-set EXE=%BASEDIR%\bin\Edger.exe
+set EXE=%BASEDIR%\bin\Edger-x64.exe
 
 if exist %SHORTCUT% del %SHORTCUT%
 
