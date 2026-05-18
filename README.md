@@ -8,11 +8,13 @@ The purpose of it is to automate earning Edge Rewards.
 Click here -> [Download](https://github.com/fahad-cpp/Edger/releases/download/1.0.0/Win-x64.zip)
 
 ## Usage
+
 Download and extract the zip from release
 
 - make sure all your edge profiles have maximized windows (does not work if windows are not maximized)
 - searchList.txt contains the searches to perform automatically
 - modify searchList.txt and run Edger-x64.exe , that's all :)
+- if you want to create a shortcut , double click on the shortcut.bat , it should create a shortcut with the icon
 
 ## Requirements for compiling
 
