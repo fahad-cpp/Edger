@@ -2,6 +2,6 @@
 #define LOGGING_H
 #include <string>
 
-void liveLog(const std::string&);
+void liveLog(const std::string &);
 
 #endif

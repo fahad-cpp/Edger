@@ -3,19 +3,21 @@
 #include <string>
 #define LIST_NAME "searchList.txt"
 #define PROMPT ""
-//max-min search delay in seconds
+// max-min search delay in seconds
 const int minSearchDelay = 5;
 const int maxSearchDelay = 15;
-const std::string edgePath = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application";
+const std::string edgePath =
+    "C:\\Program Files (x86)\\Microsoft\\Edge\\Application";
 
-typedef struct vec2{
+typedef struct vec2 {
     int x;
     int y;
-}vec2;
-const vec2 searchBarLoc = {148,54};
-class AutoClicker{
+} vec2;
+const vec2 searchBarLoc = {148, 54};
+class AutoClicker {
     bool running = false;
-    public:
+
+  public:
     void makeSearch(std::string str);
     void startClicker();
     void stopClicker();

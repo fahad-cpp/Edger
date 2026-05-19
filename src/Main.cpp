@@ -1,6 +1,6 @@
 #include "AutoClicker.h"
 
-int main(){
+int main() {
     AutoClicker autoClicker;
     autoClicker.run();
 }
