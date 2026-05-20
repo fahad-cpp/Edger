@@ -5,7 +5,7 @@
 The purpose of it is to automate earning Edge Rewards.
 ## Download
 
-Click here -> [Download](https://github.com/fahad-cpp/Edger/releases/download/1.0.0/Win-x64.zip)
+Click here -> [Download](https://github.com/fahad-cpp/Edger/releases/download/1.0.0/Edger-x64-win.zip)
 
 ## Usage
 
