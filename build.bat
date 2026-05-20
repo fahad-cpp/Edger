@@ -25,7 +25,7 @@ goto compileCmake
 
 REM compile using g++
 :compilegcc
-g++ -std=c++23 -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/%EXENAME%
+g++ -std=c++23 -static -static-libgcc -static-libstdc++ -O3 -DNDEBUG -D_NDEBUG src/*.cpp src/*.h -o bin/%EXENAME%
 if errorlevel 1 (
     echo compilation failed.
     exit /b 1
